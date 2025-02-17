@@ -1,49 +1,100 @@
-import React from 'react';
-import { useSystemStore } from '../store';
+import React from "react";
+import { useSystemStore } from "../store";
+import { sendRemoteCommand } from "../services/api";
 
-const DevicesList = () => {
+const DevicesList: React.FC = () => {
   const { devices } = useSystemStore();
 
   if (!Array.isArray(devices)) {
     console.error("devices is not an array!", devices);
-    return <p>שגיאה בטעינת הנתונים</p>;
+    return <div className="text-red-500 text-center mt-4">שגיאה בטעינת הנתונים</div>;
   }
 
-  return (
-    <div className="p-6">
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">רשימת מכשירים</h2>
-        </div>
+  // אתחול מחדש
+  const handleReboot = async (deviceId: string) => {
+    try {
+      console.log(`Sending reboot command to device: ${deviceId}`);
+      await sendRemoteCommand(deviceId, "reboot");
+      console.log(`Reboot command sent successfully to ${deviceId}`);
+    } catch (error) {
+      console.error(`Failed to send reboot command:`, error);
+    }
+  };
 
-        <div className="p-6">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">שם מכשיר</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">סטטוס</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">פעולות</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {devices.map((device) => (
-                  <tr key={device.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{device.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full ${device.status === 'online' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {device.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
-                      <button className="text-blue-600 hover:text-blue-900">הפעל מחדש</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+  // הפעלה מחדש
+  const handleRestart = async (deviceId: string) => {
+    try {
+      console.log(`Sending restart command to device: ${deviceId}`);
+      await sendRemoteCommand(deviceId, "restart");
+      console.log(`Restart command sent successfully to ${deviceId}`);
+    } catch (error) {
+      console.error(`Failed to send restart command:`, error);
+    }
+  };
+
+  // כיבוי
+  const handleShutdown = async (deviceId: string) => {
+    try {
+      console.log(`Sending shutdown command to device: ${deviceId}`);
+      await sendRemoteCommand(deviceId, "shutdown");
+      console.log(`Shutdown command sent successfully to ${deviceId}`);
+    } catch (error) {
+      console.error(`Failed to send shutdown command:`, error);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-6">
+      {/* כותרת */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">רשימת מכשירים</h2>
+
+      {/* טבלה רספונסיבית */}
+      <div className="overflow-x-auto">
+        <table className="w-full border border-gray-300 shadow-md rounded-lg">
+          <thead>
+            <tr className="bg-gray-100 text-gray-700 text-left">
+              <th className="border px-4 py-2">שם מכשיר</th>
+              <th className="border px-4 py-2">סטטוס</th>
+              <th className="border px-4 py-2">פעולות</th>
+            </tr>
+          </thead>
+          <tbody>
+            {devices.map((device) => (
+              <tr key={device.id} className="border hover:bg-gray-50 transition duration-200">
+                <td className="border px-4 py-2">{device.name}</td>
+                <td className="border px-4 py-2">{device.status}</td>
+                <td className="border px-4 py-2 space-x-2 flex">
+                  {/* אתחול מחדש */}
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow transition duration-200"
+                    onClick={() => handleReboot(device.id)}
+                    aria-label="אתחול מכשיר"
+                  >
+                    אתחל
+                  </button>
+
+                  {/* הפעלה מחדש */}
+                  <button
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow transition duration-200"
+                    onClick={() => handleRestart(device.id)}
+                    aria-label="הפעל מחדש מכשיר"
+                  >
+                    הפעל מחדש
+                  </button>
+
+                  {/* כיבוי */}
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded shadow transition duration-200"
+                    onClick={() => handleShutdown(device.id)}
+                    aria-label="כיבוי מכשיר"
+                  >
+                    כבה
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
