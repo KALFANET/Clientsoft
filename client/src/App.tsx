@@ -1,26 +1,40 @@
-import React from "react";
-import { useSystemStore } from "./store";
+import React, { useEffect } from 'react';
+import { useSystemStore } from './store';
+import Navbar from './components/Navbar';
+import DevicesList from './components/DevicesList';
+import SoftwareInstall from './components/SoftwareInstall';
+import RemoteCommand from './components/RemoteCommand';
 
 const App: React.FC = () => {
-  const { devices } = useSystemStore();
+  const { devices, loadDevices } = useSystemStore();
+  console.log(devices)
+  useEffect(() => {
+    loadDevices().then(() => {
+      console.log("Devices Loaded:", devices);
+    });
+  }, []);
 
   return (
-    <div className="p-6 bg-gray-100 h-screen">
-      <h1 className="text-xl font-bold">Network Manager</h1>
+    <div className="min-h-screen bg-gray-100">
+      {/* ניווט ראשי */}
+      <Navbar />
 
-      <div className="mt-6 bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold">Connected Devices</h2>
-        <ul className="mt-4">
-          {devices.length > 0 ? (
-            devices.map((device: { id: string; name: string; status: string; os: string }) => (
-              <li key={device.id} className="bg-gray-50 p-2 rounded shadow mt-2">
-                {device.name} - {device.status} - <strong>{device.os.toUpperCase()}</strong>
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-500">No devices connected.</p>
-          )}
-        </ul>
+      {/* תוכן הדף */}
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">ניהול מכשירים</h1>
+
+        {/* רשימת מכשירים */}
+        <DevicesList />
+
+        {/* ממשק לשליחת פקודות */}
+        <div className="mt-8">
+          <RemoteCommand />
+        </div>
+
+        {/* ממשק התקנת תוכנות */}
+        <div className="mt-8">
+          <SoftwareInstall />
+        </div>
       </div>
     </div>
   );

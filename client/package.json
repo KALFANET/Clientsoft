@@ -5,6 +5,7 @@
   "main": "src/main.ts",
   "dependencies": {
     "axios": "^1.7.9",
+    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.29.0",
@@ -12,10 +13,10 @@
     "zustand": "^5.0.3"
   },
   "scripts": {
-    "start": "npm run client", 
-    "client": "cross-env BROWSER=none react-scripts start", 
-    "electron": "electron .", 
-    "server": "node server.js", 
+    "start": "npm run client",
+    "client": "cross-env BROWSER=none react-scripts start",
+    "electron": "electron .",
+    "server": "node server.js",
     "build": "react-scripts build",
     "build:electron": "electron-builder",
     "clean": "rm -rf node_modules package-lock.json && npm cache clean --force"
@@ -39,12 +40,16 @@
     ]
   },
   "devDependencies": {
+    "@electron/remote": "^2.1.2",
+    "@tailwindcss/postcss": "^4.0.6",
     "autoprefixer": "^10.4.20",
-    "electron": "^34.1.1",
-    "postcss": "^8.5.2",
-    "tailwindcss": "^4.0.6",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "wait-on": "^7.0.1"
+    "electron": "^34.1.1",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.5.2",
+    "postcss-loader": "^8.1.1",
+    "tailwindcss": "^4.0.6",
+    "wait-on": "^7.2.0"
   }
 }

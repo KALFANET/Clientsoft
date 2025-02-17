@@ -1,20 +1,12 @@
-import { create } from "zustand";
-import { fetchDevices } from "./services/api";
-
-interface SystemState {
-  devices: { id: string; name: string; status: string }[];
-  loadDevices: () => Promise<void>;
-}
-
-export const useSystemStore = create<SystemState>((set) => ({
-  devices: [],
-  loadDevices: async () => {
-    try {
-      const devices = await fetchDevices();
-      set({ devices });
-    } catch (error) {
-      console.error("Failed to load devices:", error);
-    }
-    
-  },
-}));
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import "./dist/output.css";
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
