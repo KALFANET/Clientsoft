@@ -1,6 +1,5 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
-
 let mainWindow: BrowserWindow | null;
 
 app.on("ready", () => {
@@ -15,6 +14,7 @@ app.on("ready", () => {
   });
 
   mainWindow.loadURL("http://localhost:3000");
+  mainWindow.webContents.openDevTools();
 });
 
 app.on("window-all-closed", () => {

@@ -1,32 +1,48 @@
 {
-  "name": "client",
-  "version": "0.1.0",
-  "private": true,
-  "main": "src/main.ts",
+  "name": "client-electron",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "scripts": {
+    "start": "concurrently \"npm run dev:react\" \"npm run dev:electron\"",
+    "dev:react": "react-scripts start",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "build": "npm run build:react && npm run build:electron",
+    "build:react": "react-scripts build",
+    "build:electron": "electron-builder",
+    "package": "electron-builder --dir",
+    "dist": "electron-builder",
+    "lint": "eslint ./src --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "chakra:typegen": "chakra-ui typegen src/theme.ts",
+    "chakra:snippets": "chakra-ui snippet add --all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^34.1.1",
+    "electron-builder": "^25.1.8",
+    "eslint": "^8.47.0",
+    "prettier": "^3.2.4"
+  },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.0",
+    "@chakra-ui/react": "^2.10.5",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "axios": "^1.7.9",
-    "path": "^0.12.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "framer-motion": "^10.18.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.29.0",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "5.0.1",
     "zustand": "^5.0.3"
-  },
-  "scripts": {
-    "start": "npm run client",
-    "client": "cross-env BROWSER=none react-scripts start",
-    "electron": "electron .",
-    "server": "node server.js",
-    "build": "react-scripts build",
-    "build:electron": "electron-builder",
-    "clean": "rm -rf node_modules package-lock.json && npm cache clean --force"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -39,18 +55,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@electron/remote": "^2.1.2",
-    "@tailwindcss/postcss": "^4.0.6",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "electron": "^34.1.1",
-    "electron-builder": "^25.1.8",
-    "postcss": "^8.5.2",
-    "postcss-loader": "^8.1.1",
-    "tailwindcss": "^4.0.6",
-    "wait-on": "^7.2.0"
   }
 }

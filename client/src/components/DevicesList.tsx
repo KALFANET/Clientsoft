@@ -1,102 +1,57 @@
-import React from "react";
-import { useSystemStore } from "../store";
-import { sendRemoteCommand } from "../services/api";
+import React from 'react';
+import { useSystemStore } from '../store';
+import { Box, Grid, GridItem, Text, Icon, VStack } from '@chakra-ui/react';
+import { FiSmartphone, FiMonitor, FiCpu, FiDatabase } from "react-icons/fi"; 
+import { FaMemory, FaMicrochip } from "react-icons/fa";
 
 const DevicesList: React.FC = () => {
   const { devices } = useSystemStore();
 
-  if (!Array.isArray(devices)) {
-    console.error("devices is not an array!", devices);
-    return <div className="text-red-500 text-center mt-4">שגיאה בטעינת הנתונים</div>;
-  }
-
-  // אתחול מחדש
-  const handleReboot = async (deviceId: string) => {
-    try {
-      console.log(`Sending reboot command to device: ${deviceId}`);
-      await sendRemoteCommand(deviceId, "reboot");
-      console.log(`Reboot command sent successfully to ${deviceId}`);
-    } catch (error) {
-      console.error(`Failed to send reboot command:`, error);
-    }
-  };
-
-  // הפעלה מחדש
-  const handleRestart = async (deviceId: string) => {
-    try {
-      console.log(`Sending restart command to device: ${deviceId}`);
-      await sendRemoteCommand(deviceId, "restart");
-      console.log(`Restart command sent successfully to ${deviceId}`);
-    } catch (error) {
-      console.error(`Failed to send restart command:`, error);
-    }
-  };
-
-  // כיבוי
-  const handleShutdown = async (deviceId: string) => {
-    try {
-      console.log(`Sending shutdown command to device: ${deviceId}`);
-      await sendRemoteCommand(deviceId, "shutdown");
-      console.log(`Shutdown command sent successfully to ${deviceId}`);
-    } catch (error) {
-      console.error(`Failed to send shutdown command:`, error);
-    }
-  };
+  console.log("📡 Devices from store:", devices);
 
   return (
-    <div className="container mx-auto p-6">
-      {/* כותרת */}
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">רשימת מכשירים</h2>
+    <Box>
+      <Text fontSize="2xl" fontWeight="bold" textAlign="center" mb={4}>
+        📋 רשימת מכשירים
+      </Text>
 
-      {/* טבלה רספונסיבית */}
-      <div className="overflow-x-auto">
-        <table className="w-full border border-gray-300 shadow-md rounded-lg">
-          <thead>
-            <tr className="bg-gray-100 text-gray-700 text-left">
-              <th className="border px-4 py-2">שם מכשיר</th>
-              <th className="border px-4 py-2">סטטוס</th>
-              <th className="border px-4 py-2">פעולות</th>
-            </tr>
-          </thead>
-          <tbody>
-            {devices.map((device) => (
-              <tr key={device.id} className="border hover:bg-gray-50 transition duration-200">
-                <td className="border px-4 py-2">{device.name}</td>
-                <td className="border px-4 py-2">{device.status}</td>
-                <td className="border px-4 py-2 space-x-2 flex">
-                  {/* אתחול מחדש */}
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow transition duration-200"
-                    onClick={() => handleReboot(device.id)}
-                    aria-label="אתחול מכשיר"
-                  >
-                    אתחל
-                  </button>
-
-                  {/* הפעלה מחדש */}
-                  <button
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded shadow transition duration-200"
-                    onClick={() => handleRestart(device.id)}
-                    aria-label="הפעל מחדש מכשיר"
-                  >
-                    הפעל מחדש
-                  </button>
-
-                  {/* כיבוי */}
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded shadow transition duration-200"
-                    onClick={() => handleShutdown(device.id)}
-                    aria-label="כיבוי מכשיר"
-                  >
-                    כבה
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {devices.length === 0 ? (
+        <Text textAlign="center" fontSize="lg" color="gray.500">
+          🚫 אין מכשירים להצגה
+        </Text>
+      ) : (
+        <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }} gap={6}>
+          {devices.map((device) => (
+            <GridItem 
+              key={device.id} 
+              p={4} 
+              borderWidth="1px" 
+              borderRadius="lg" 
+              boxShadow="lg" 
+              textAlign="center" 
+              bg="white"
+              _hover={{ transform: "scale(1.03)", transition: "0.2s ease-in-out" }}
+            >
+              {/* אייקון בהתאם לסוג מערכת ההפעלה */}
+              <Icon as={device.os.toLowerCase().includes("windows") ? FiMonitor : FiSmartphone} boxSize={12} color="blue.500" />
+              
+              <VStack spacing={1} mt={3} align="center">
+                <Text fontSize="xl" fontWeight="bold">{device.name}</Text>
+                <Text fontSize="md" color={device.status === "online" ? "green.500" : "red.500"} fontWeight="bold">
+                  {device.status === "online" ? "מחובר ✅" : "מנותק ❌"}
+                </Text>
+                
+                <Text fontSize="sm" color="gray.600"><b>כתובת IP:</b> {device.ipAddress || "לא ידוע"}</Text>
+                <Text fontSize="sm" color="gray.600"><b>מערכת הפעלה:</b> {device.os || "לא ידוע"}</Text>
+                <Text fontSize="sm" color="gray.600"><b>גרסה:</b> {device.osVersion || "לא ידוע"}</Text>
+                <Text fontSize="sm" color="gray.600"><b>מעבד:</b> {device.cpu || "לא ידוע"}</Text>
+                <Text fontSize="sm" color="gray.600"><b>זיכרון:</b> {device.memory || "לא ידוע"}</Text>
+              </VStack>
+            </GridItem>
+          ))}
+        </Grid>
+      )}
+    </Box>
   );
 };
 
